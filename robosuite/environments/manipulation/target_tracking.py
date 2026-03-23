@@ -41,7 +41,7 @@ class TargetTracking(ManipulationEnv):
         horizon=1000,
         ignore_done=False,
         hard_reset=True,
-        camera_names="agentview",
+        camera_names="all-eye_in_hand",
         camera_heights=256,
         camera_widths=256,
         camera_depths=False,
