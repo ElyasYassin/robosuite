@@ -19,7 +19,7 @@ import robosuite as suite
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Smoke-test TargetTracking with UR5e")
-    parser.add_argument("--steps", type=int, default=300, help="Max steps to run")
+    parser.add_argument("--steps", type=int, default=1500, help="Max steps to run")
     parser.add_argument("--seed", type=int, default=0, help="Random seed for reproducibility")
     parser.add_argument(
         "--onscreen",
