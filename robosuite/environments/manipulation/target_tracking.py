@@ -102,7 +102,13 @@ class TargetTracking(ManipulationEnv):
     def _eef_to_target(self):
         """Vector from end-effector to current target position."""
         target_pos = np.array(self.sim.data.body_xpos[self.target_body_id])
-        gripper_site = self.robots[0].gripper.important_sites["grip_site"]
+        gripper = self.robots[0].gripper
+        if isinstance(gripper, dict):
+            # pick first available arm gripper for single-arm UR5e
+            arm_key = self.robots[0].arms[0] if hasattr(self.robots[0], "arms") else next(iter(gripper.keys()))
+            gripper = gripper[arm_key]
+
+        gripper_site = gripper.important_sites["grip_site"]
         eef_pos = np.array(self.sim.data.get_site_xpos(gripper_site))
         return target_pos - eef_pos
     def _load_model(self):
