@@ -101,10 +101,12 @@ class TargetTracking(ManipulationEnv):
         return reward
     def _eef_to_target(self):
         """Vector from end-effector to current target position."""
-        target_pos = np.array(self.sim.data.body_xpos[self.target_body_id])
-        gripper_site = self.robots[0].gripper.important_sites["grip_site"]
-        eef_pos = np.array(self.sim.data.get_site_xpos(gripper_site))
-        return target_pos - eef_pos
+        return self._gripper_to_target(
+            gripper=self.robots[0].gripper,
+            target=self.target.root_body,
+            target_type="body",
+            return_distance=False,
+        )
     def _load_model(self):
         super()._load_model()
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
@@ -153,10 +155,17 @@ class TargetTracking(ManipulationEnv):
             modality = "object"
             @sensor(modality=modality)
             def target_pos(obs_cache):
-                return np.array(self.sim.data.body_xpos[self.target_body_id])
+                try:
+                    return np.array(self.sim.data.body_xpos[self.target_body_id])
+                except Exception:
+                    return np.zeros(3)
+
             @sensor(modality=modality)
             def eef_to_target(obs_cache):
-                return self._eef_to_target()
+                try:
+                    return self._eef_to_target()
+                except Exception:
+                    return np.zeros(3)
             sensors = [target_pos, eef_to_target]
             names = [s.__name__ for s in sensors]
             for name, s in zip(names, sensors):
